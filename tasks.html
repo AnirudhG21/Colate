@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            padding: 20px;
+            height: 100vh;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 15px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        .sidebar ul li.active, .sidebar ul li:hover {
+            background-color: #2466c8;
+            color: #ffffff;
+            border-radius: 2rem;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+        }
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 2em;
+            padding: 2em;
+        }
+        .task-panel, .task-list {
+            background-color: white;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 2em;
+            height: 200px;
+            overflow-y: auto;
+        }
+        .task-panel h2, .task-list h2 {
+            margin-top: 0;
+        }
+        .task-panel form {
+            display: flex;
+            flex-direction: column;
+        }
+        .task-panel input[type="text"], .task-panel input[type="date"] {
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .task-panel button {
+            padding: 0.5em;
+            background-color: #2466c8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .task-panel button:hover {
+            background-color: #1e5bb8;
+        }
+        .task-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .task-list ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task-list ul li button {
+            background-color: #f44336;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            padding: 0.5em 1em;
+        }
+        .task-list ul li button:hover {
+            opacity: 0.8;
+        }
+        .submit {
+            display: flex;
+            justify-content: center;
+            width: 80%;
+            margin-left: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>TaskMe</h2>
+            <ul>
+                <li><a href="dashboard.html"><i class="fa-solid fa-user"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dashboard</a></li>
+                <li><a href="tasks.html"><i class="fa-solid fa-list-check"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tasks</a></li>
+                
+                <li><a href="index.html"><i class="fa-solid fa-right-from-bracket"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Logout </a></li>
+            </ul>
+        </div>
+        <main>
+            <div class="task-panel">
+                <h2>Create Task</h2>
+                <form id="task-form">
+                    <input type="text" id="task-input" placeholder="Enter task" required>
+                    <label>
+                    Due date: <input type="date" id="due-date" required>
+                    <br>
+                    <button type="submit" class="submit">Add Task</button>
+                </form>
+            </div>
+        </main>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const taskForm = document.getElementById('task-form');
+            const taskList = document.getElementById('task-list');
+            const totalTasksElement = document.getElementById('total-tasks');
+            const activeTasksElement = document.getElementById('active-tasks');
+            const completedTasksElement = document.getElementById('completed-tasks');
+
+            function fetchTasks() {
+                fetch('get_tasks.php')
+                    .then(response => response.json())
+                    .then(tasks => {
+                        taskList.innerHTML = '';
+                        let activeCount = 0, completedCount = 0;
+
+                        tasks.forEach(task => {
+                            const taskItem = document.createElement('li');
+                            taskItem.innerHTML = `${task.task} (Due: ${task.due_date}) - ${task.status}`;
+
+                            const completeButton = document.createElement('button');
+                            completeButton.textContent = 'Completed';
+                            completeButton.addEventListener('click', function() {
+                                updateTaskStatus(task.id, 'Completed');
+                            });
+
+                            const deleteButton = document.createElement('button');
+                            deleteButton.textContent = 'Delete';
+                            deleteButton.addEventListener('click', function() {
+                                deleteTask(task.id);
+                            });
+
+                            taskItem.appendChild(completeButton);
+                            taskItem.appendChild(deleteButton);
+                            taskList.appendChild(taskItem);
+
+                            if (task.status === 'Pending' || task.status === 'Ongoing') {
+                                activeCount++;
+                            } else if (task.status === 'Completed') {
+                                completedCount++;
+                            }
+                        });
+
+                        totalTasksElement.textContent = tasks.length;
+                        activeTasksElement.textContent = activeCount;
+                        completedTasksElement.textContent = completedCount;
+                    });
+            }
+
+            taskForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const taskInput = document.getElementById('task-input').value;
+                const dueDateInput = document.getElementById('due-date').value;
+
+                fetch('add_task.php', {
+                    method: 'POST',
+                    body: new URLSearchParams({ task: taskInput, due_date: dueDateInput }),
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    fetchTasks();
+                });
+
+                // Clear the input fields
+                document.getElementById('task-input').value = '';
+                document.getElementById('due-date').value = '';
+            });
+
+            function updateTaskStatus(taskId, status) {
+                fetch('update_task.php', {
+                    method: 'POST',
+                    body: new URLSearchParams({ task_id: taskId, status: status }),
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    fetchTasks();
+                });
+            }
+
+            function deleteTask(taskId) {
+                fetch('delete_task.php', {
+                    method: 'POST',
+                    body: new URLSearchParams({ task_id: taskId }),
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    fetchTasks();
+                });
+            }
+
+            fetchTasks();
+        });
+    </script>
+</body>
+</html>

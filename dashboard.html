@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="Stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            padding: 20px;
+            height: 100vh;
+            box-shadow: #666;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 15px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        .sidebar ul li.active, .sidebar ul li:hover {
+            background-color: #2466c8;
+            color: #ffffff;
+            border-radius: 2rem;
+        }
+        
+        .sidebar ul li a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+        }
+        
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #2f3eb1;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .task-cards {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .task-card {
+            width: 30%;
+            background-color: white;
+            padding: 20px;
+            /* border-radius: 2rem; */
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0.5rem;
+            text-align: center;
+        }
+        .task-card h3 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        .task-card p {
+            margin: 0;
+            font-size: 1rem;
+            color: #666;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+        .dropdown-content button {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .dropdown-content button:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown button {
+    background-color: #2466c8;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.dropdown button:hover {
+    background-color: #1e56a0;
+}
+
+.dropdown-content button {
+    background-color: white;
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dropdown-content button:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-content button:last-child {
+    border-bottom: none; /* Remove the border for the last child */
+}
+
+#a{
+    background-color: rgb(236, 236, 63);
+}
+
+#b{
+    background-color: rgb(103, 238, 103);
+}
+
+#c{
+    background-color: #aec7ed;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #ffffff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: none;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown button {
+    background-color: #2466c8;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.dropdown button:hover {
+    background-color: #1e56a0;
+}
+
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>TaskMe</h2>
+            <ul>
+                <li><a href="dashboard.html"><i class="fa-solid fa-user"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dashboard</a></li>
+                <li><a href="tasks.html"><i class="fa-solid fa-list-check"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tasks</a></li>
+                
+                <li><a href="index.html"><i class="fa-solid fa-right-from-bracket"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Logout </a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="top-nav">
+            </div>
+            <div class="task-cards">
+                <div class="task-card" id="c">
+                    <h3 id="total-tasks">0</h3>
+                    <p>Total Tasks</p>
+                </div>
+                <div class="task-card" id="a">
+                    <h3 id="active-tasks">0</h3>
+                    <p>Active Tasks</p>
+                </div>
+                <div class="task-card" id="b">
+                    <h3 id="completed-tasks">0</h3>
+                    <p>Completed Tasks</p>
+                </div>
+            </div>
+            <section id="task-list-section">
+                <h2>Active Tasks</h2>
+                <ul id="task-list">
+                    <!-- Active tasks will be dynamically added here -->
+                </ul>
+            </section>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    fetchTasks();
+});
+
+function fetchTasks() {
+    fetch('fetch_tasks.php')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Fetched tasks:", data); // Debugging Line
+            if (data.status !== 'success') {
+                alert('Error fetching tasks: ' + data.message);
+                return;
+            }
+
+            const taskList = document.getElementById('task-list');
+            const totalTasks = document.getElementById('total-tasks');
+            const activeTasks = document.getElementById('active-tasks');
+            const completedTasks = document.getElementById('completed-tasks');
+
+            taskList.innerHTML = '';
+            totalTasks.textContent = data.total;
+            activeTasks.textContent = data.active;
+            completedTasks.textContent = data.completed;
+
+            data.tasks.forEach(task => {
+                const taskItem = document.createElement('li');
+                taskItem.innerHTML = `
+                    <span>${task.task} (Due: ${task.due_date}) - ${task.status}</span>
+                    
+                    <div class="dropdown">
+                        <button class="dropdown-btn">Edit</button>
+                        <div class="dropdown-content">
+                            <a href="#" onclick="editTask(${task.id}, '${task.task}', '${task.due_date}')">Edit</a>
+                            <a href="#" onclick="deleteTask(${task.id})">Delete</a>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <button class="dropdown-btn">Status</button>
+                        <div class="dropdown-content">
+                            <a href="#" onclick="updateStatus(${task.id}, 'Ongoing')">Ongoing</a>
+                            <a href="#" onclick="updateStatus(${task.id}, 'Completed')">Completed</a>
+                        </div>
+                    </div>
+                `;
+
+                taskList.appendChild(taskItem);
+            });
+        })
+        .catch(error => {
+            alert('Error fetching tasks: ' + error.message);
+        });
+}
+
+
+
+// Edit Task
+function editTask(taskId, task, dueDate) {
+    const newTask = prompt('Edit your task:', task);
+    const newDueDate = prompt('Edit due date:', dueDate);
+    if (newTask && newDueDate) {
+        fetch('update_task.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `task_id=${taskId}&task=${encodeURIComponent(newTask)}&due_date=${newDueDate}`
+        })
+        .then(response => response.json())
+        .then(() => fetchTasks());
+    }
+}
+
+// Delete Task
+function deleteTask(taskId) {
+    fetch('delete_task.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `task_id=${taskId}`
+    })
+    .then(response => response.json())
+    .then(() => fetchTasks());
+}
+
+// Update Task Status
+function updateStatus(taskId, status) {
+    fetch('update_status.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `task_id=${taskId}&status=${status}`
+    })
+    .then(response => response.json())
+    .then(() => fetchTasks());
+}
+
+
+    </script>
+</body>
+</html>
